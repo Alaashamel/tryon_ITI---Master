@@ -1,0 +1,135 @@
+import { Shirt, RefreshCw, User } from 'lucide-react';
+import QuotaBar from './QuotaBar';
+
+const statusStyles = {
+  Active: 'bg-admin-success/10 text-admin-success',
+  Inactive: 'bg-admin-danger/10 text-admin-danger',
+};
+
+const roleStyles = {
+  Admin: { bg: 'rgba(239,68,68,0.082)', color: '#EF4444' },
+  Premium: { bg: 'rgba(139,92,246,0.082)', color: '#8B5CF6' },
+  User: { bg: 'rgba(107,114,128,0.082)', color: '#6B7280' },
+};
+
+export default function UserRow({ user, mobile, selected, onToggle }) {
+  const roleStyle = roleStyles[user.role] || roleStyles.User;
+
+  const quotaCell = (used, total, Icon, iconColor, barColor) => {
+    if (user.isAdmin) {
+      return (
+        <span className="text-xs text-text-disabled font-medium">N/A</span>
+      );
+    }
+    return (
+      <QuotaBar
+        icon={Icon}
+        iconColor={iconColor}
+        used={used}
+        total={total}
+        barColor={barColor}
+      />
+    );
+  };
+
+  if (mobile) {
+    return (
+      <div className={`bg-surface-elevated rounded-xl border shadow-sm p-4 transition-colors ${selected ? 'border-admin-brand bg-admin-brand/5' : 'border-admin-border/40'}`}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => onToggle?.(user.id)}
+              className="w-4 h-4 rounded border-admin-border accent-admin-brand shrink-0 cursor-pointer"
+            />
+            <div
+              className="w-9 h-9 rounded-[14px] flex items-center justify-center shrink-0"
+              style={{ backgroundColor: user.avatarBg }}
+            >
+              <span className="text-xs font-bold text-white">{user.initials}</span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-text-primary leading-5 truncate">{user.name}</p>
+              <p className="text-xs text-text-disabled leading-4 truncate">{user.email}</p>
+            </div>
+          </div>
+          <span
+            className={`shrink-0 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusStyles[user.status] || 'bg-admin-border/20 text-admin-text-muted'}`}
+          >
+            {user.status}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1 mb-3">
+          <span
+            className="inline-block px-2 py-0.5 text-[11px] font-medium rounded-full"
+            style={{ backgroundColor: roleStyle.bg, color: roleStyle.color }}
+          >
+            {user.role}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {quotaCell(user.tryOn.used, user.tryOn.total, Shirt, 'text-brand-secondary', 'bg-brand-secondary')}
+          {quotaCell(user.recycling.used, user.recycling.total, RefreshCw, 'text-admin-brand-light', 'bg-admin-brand-light')}
+          {quotaCell(user.avatar.used, user.avatar.total, User, 'text-purple-500', 'bg-purple-500')}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <tr className={`border-b border-admin-border hover:bg-admin-brand-activeBg/30 transition-colors ${selected ? 'bg-admin-brand/5' : ''}`}>
+      <td className="py-3 px-4">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggle?.(user.id)}
+            className="w-4 h-4 rounded border-admin-border accent-admin-brand shrink-0 cursor-pointer"
+          />
+          <div
+            className="w-9 h-9 rounded-[14px] flex items-center justify-center shrink-0"
+            style={{ backgroundColor: user.avatarBg }}
+          >
+            <span className="text-xs font-bold text-white">{user.initials}</span>
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-text-primary leading-5 truncate">{user.name}</p>
+            <p className="text-xs text-text-disabled leading-4 truncate">{user.email}</p>
+          </div>
+        </div>
+      </td>
+
+      <td className="py-3 px-4">
+        <span
+          className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full"
+          style={{ backgroundColor: roleStyle.bg, color: roleStyle.color }}
+        >
+          {user.role}
+        </span>
+      </td>
+
+      <td className="py-3 px-4">
+        {quotaCell(user.tryOn.used, user.tryOn.total, Shirt, 'text-brand-secondary', 'bg-brand-secondary')}
+      </td>
+
+      <td className="py-3 px-4">
+        {quotaCell(user.recycling.used, user.recycling.total, RefreshCw, 'text-admin-brand-light', 'bg-admin-brand-light')}
+      </td>
+
+      <td className="py-3 px-4">
+        {quotaCell(user.avatar.used, user.avatar.total, User, 'text-purple-500', 'bg-purple-500')}
+      </td>
+
+      <td className="py-3 px-4">
+        <span
+          className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full ${statusStyles[user.status] || 'bg-admin-border/20 text-admin-text-muted'}`}
+        >
+          {user.status}
+        </span>
+      </td>
+    </tr>
+  );
+}

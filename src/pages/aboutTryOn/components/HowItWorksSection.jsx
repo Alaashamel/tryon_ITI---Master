@@ -1,0 +1,85 @@
+import { useTranslation } from 'react-i18next';
+import CameraIcon from '../../../icons/CameraIcon';
+import BodyIcon from '../../../icons/BodyIcon';
+import SparkleIcon from '../../../icons/SparkleIcon';
+
+const steps = [
+  {
+    number: 1,
+    icon: CameraIcon,
+    titleKey: 'step1Title',
+    descKey: 'step1Desc',
+    iconColor: '#004769',
+    parentBg: '#40B9FF',
+    badgeBg: '#006492',
+  },
+  {
+    number: 2,
+    icon: BodyIcon,
+    titleKey: 'step2Title',
+    descKey: 'step2Desc',
+    iconColor: '#9A4600',
+    parentBg: '#FF9451',
+    badgeBg: '#6F3000',
+  },
+  {
+    number: 3,
+    icon: SparkleIcon,
+    titleKey: 'step3Title',
+    descKey: 'step3Desc',
+    iconColor: '#466E00',
+    parentBg: '#ACF445',
+    badgeBg: '#426900',
+  },
+];
+
+export default function HowItWorksSection() {
+  const { t } = useTranslation();
+  return (
+    <section id="how-it-works" className="px-6 sm:px-10 lg:px-20 py-12">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-text-primary mb-4">
+            {t('aboutTryon.howItWorks')}
+          </h2>
+          <p className="text-text-disabled max-w-2xl mx-auto leading-relaxed">
+            {t('aboutTryon.howItWorksSub')}
+          </p>
+        </div>
+
+        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+          {steps.map(step => (
+            <div
+              key={step.number}
+              className="relative flex flex-col items-center text-center group"
+            >
+              <div className="relative mb-8">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300"
+                  style={{ backgroundColor: step.parentBg }}
+                >
+                  <step.icon
+                    className="w-[25px] h-auto"
+                    style={{ color: step.iconColor }}
+                  />
+                </div>
+                <div
+                  className="absolute -top-2 -left-2 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                  style={{ backgroundColor: step.badgeBg }}
+                >
+                  {step.number}
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-text-primary mb-3">
+                {t(`aboutTryon.${step.titleKey}`)}
+              </h3>
+              <p className="text-text-secondary leading-relaxed max-w-sm">
+                {t(`aboutTryon.${step.descKey}`)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
