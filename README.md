@@ -153,8 +153,6 @@ Offline:
 
 ## 🗂 Project Structure
 
-## Project Structure
-
 ```
 redolapy/
 ├── public/                          # Static assets (served as-is)
