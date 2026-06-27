@@ -153,62 +153,205 @@ Offline:
 
 ## 🗂 Project Structure
 
-```
-src/
-├── api/              # Axios modules per domain
-│   ├── axiosInstance.js       # JWT Bearer interceptor
-│   ├── authApi.js             # /auth/*
-│   ├── wardrobeApi.js         # /wardrobe/*
-│   ├── tryOnApi.js            # /virtual-tryon/*
-│   ├── recycleApi.js          # /recycle/*
-│   ├── matchingApi.js         # /matches · /analyze
-│   ├── avatarApi.js           # /avatars/*
-│   ├── paymentApi.js          # /payments/*
-│   ├── notificationApi.js     # /notifications/*
-│   ├── adminApi.js            # admin CRUD
-│   └── favorites_services/
-│
-├── context/          # Global state providers
-│   ├── AuthContext.jsx
-│   ├── ThemeContext.jsx
-│   ├── WardrobeContext.jsx    # cache-first loading
-│   ├── RecommendationContext.jsx
-│   └── FavoritesContext.jsx   # optimistic updates
-│
-├── services/
-│   ├── indexedDB.js           # IDB wrapper (10 object stores)
-│   └── cacheService.js        # hash-based sync
-│
-├── hooks/
-│   ├── useOnlineStatus.js
-│   └── useCacheSync.js
-│
-├── utils/
-│   ├── tokenUtils.js          # localStorage auth helpers
-│   ├── translate.js           # MyMemory EN → AR
-│   ├── toast.js               # SweetAlert2 config
-│   └── dailyRecommendation.js
-│
-├── i18n/
-│   ├── locales/en.json        # ~800 keys
-│   ├── locales/ar.json        # ~800 keys
-│   └── admin/                 # separate admin i18n instance
-│
-├── components/       # Shared UI components
-│   ├── Navbar.jsx · Footer.jsx · Button.jsx
-│   ├── wardrobe/ · store/ · tryOn/
-│   └── PWAUpdatePrompt · PwaInstallButton · NotificationWindow
-│
-├── pages/            # Route-level components
-│   ├── home/ · Auth/ · tryOn/ · wardrobe/
-│   ├── recycle/ · matching/ · store/
-│   ├── recommendations/ · avatar/ · profile/
-│   ├── fav/ · pricing/ · admin/
-│   └── OfflinePage/ · NotFound/
-│
-└── icons/            # 28 custom SVG icon components
-```
+## Project Structure
 
+```
+redolapy/
+├── public/                          # Static assets (served as-is)
+│   ├── favicon.png / .svg           # App favicons
+│   ├── logo-dark.svg / logo-light.svg
+│   ├── pwa-192x192-v2.png           # PWA icon (192x192)
+│   ├── pwa-512x512-v2.png           # PWA icon (512x512)
+│   ├── boyTryOn.png                 # Try-On avatar preview
+│   ├── cameraFrame.png              # Upload camera placeholder
+│   ├── google.svg                   # Google OAuth button icon
+│   ├── login.jpg / login2.jpg       # Auth page backgrounds
+│   ├── *.json                       # Lottie animation files
+│   └── *.png / *.svg                # Other images
+│
+├── src/
+│   ├── main.jsx                     # App entry point
+│   ├── App.jsx                      # Root component, router, providers
+│   ├── index.css                    # Global styles, Tailwind, themes, CSS variables
+│   ├── App.css                      # (empty)
+│   │
+│   ├── api/                         # API service layer
+│   │   ├── axiosInstance.js         # Axios instance with Bearer token interceptor
+│   │   ├── authApi.js               # Endpoints: /auth/*
+│   │   ├── userApi.js               # Endpoints: /users/*, /products, /stores, /wardrobe, /analyze
+│   │   ├── tryOnApi.js              # Endpoints: /virtual-tryon, /virtual-tryon/outfit
+│   │   ├── wardrobeApi.js           # Endpoint: /wardrobe
+│   │   ├── wardrobeService.js       # Wardrobe item fetch by ID
+│   │   ├── recommendationsApi.js    # Endpoints: /recommendations (GET + POST)
+│   │   ├── recycleApi.js            # Endpoints: /recycle/*
+│   │   ├── matchingApi.js           # Endpoints: /matches, /analyze, /matches/analysis
+│   │   ├── avatarApi.js             # Endpoints: /avatars/*
+│   │   ├── paymentApi.js            # Endpoints: /payments/*
+│   │   ├── notificationApi.js       # Endpoints: /notifications/*
+│   │   ├── adminApi.js              # Endpoints: admin CRUD for stores, products, users, etc.
+│   │   └── favorites_services/
+│   │       └── favoritesService.js  # Favorites CRUD with enrichment
+│   │
+│   ├── context/                     # React Context providers
+│   │   ├── AuthContext.jsx          # User auth state, login/logout
+│   │   ├── ThemeContext.jsx         # Dark/light theme with system preference detection
+│   │   ├── WardrobeContext.jsx      # Wardrobe items with cache-first loading
+│   │   ├── RecommendationContext.jsx # Daily recommendations, weather, history
+│   │   └── FavoritesContext.jsx     # Favorites with optimistic updates
+│   │
+│   ├── hooks/                       # Custom React hooks
+│   │   ├── useOnlineStatus.js       # Online/offline detection
+│   │   └── useCacheSync.js          # Cache synchronization utility
+│   │
+│   ├── services/                    # Client-side data services
+│   │   ├── indexedDB.js             # IndexedDB wrapper — 10 object stores
+│   │   └── cacheService.js          # Cache sync with hash-based invalidation
+│   │
+│   ├── utils/                       # Utility functions
+│   │   ├── tokenUtils.js            # localStorage auth get/set/remove
+│   │   ├── proxiedFetch.js          # KIE image proxy URL helper
+│   │   ├── dailyRecommendation.js   # Daily outfit caching and localStorage helpers
+│   │   ├── translate.js             # MyMemory API English→Arabic translation
+│   │   └── toast.js                 # SweetAlert2 toast configuration
+│   │
+│   ├── i18n/                        # Internationalization
+│   │   ├── i18n.js                  # i18next configuration
+│   │   ├── locales/
+│   │   │   ├── en.json              # English translations (~800 keys)
+│   │   │   └── ar.json              # Arabic translations (~800 keys)
+│   │   └── admin/
+│   │       ├── adminI18n.js         # Admin-specific i18next instance
+│   │       └── locales/
+│   │           ├── en.json          # Admin English translations (~300 keys)
+│   │           └── ar.json          # Admin Arabic translations (~300 keys)
+│   │
+│   ├── components/                  # Shared/reusable components
+│   │   ├── Navbar.jsx               # Responsive nav with auth, theme toggle, i18n, notifications
+│   │   ├── Footer.jsx               # Site footer
+│   │   ├── Button.jsx               # Reusable button component
+│   │   ├── AuthModal.jsx            # Authentication dialog/modal
+│   │   ├── LoadingScreen.jsx        # Full-screen Lottie loading overlay
+│   │   ├── EmptyState.jsx           # Empty state with optional action button
+│   │   ├── PWAUpdatePrompt.jsx      # "New version available" update prompt
+│   │   ├── PwaInstallButton.jsx     # "Install App" button (beforeinstallprompt)
+│   │   ├── NotificationWindow.jsx   # Notification dropdown list
+│   │   ├── OutfitDetailModal.jsx    # Weekly outfit detail modal
+│   │   ├── SlidingOverlay.jsx       # Animated sliding panel
+│   │   ├── wardrobe/                # Wardrobe sub-components
+│   │   │   ├── WardrobeHealth.jsx
+│   │   │   ├── WardrobeFilters.jsx
+│   │   │   ├── WardrobeItemCard.jsx
+│   │   │   ├── EmptyState.jsx
+│   │   │   ├── AddItemModal.jsx
+│   │   │   ├── ItemDetailsModal.jsx
+│   │   │   └── EditItemWardrobe.jsx
+│   │   ├── store/                   # Store sub-components
+│   │   │   ├── FilterSidebar.jsx
+│   │   │   └── ProductCard.jsx
+│   │   └── tryOn/                   # Try-On sub-components
+│   │       ├── ModelSelectionCard.jsx
+│   │       └── WardrobeItem.jsx
+│   │
+│   ├── pages/                       # Page-level components
+│   │   ├── Layout.jsx               # Main app layout (navbar, footer, auth modal, offline check)
+│   │   ├── AdminLayout.jsx          # Admin layout wrapper
+│   │   ├── home/
+│   │   │   ├── Home.jsx             # Landing page (composes all sections)
+│   │   │   └── components/
+│   │   │       ├── Hero.jsx
+│   │   │       ├── Intro.jsx
+│   │   │       ├── Features.jsx
+│   │   │       ├── Sustainability.jsx
+│   │   │       ├── Mirror.jsx
+│   │   │       ├── Pricing.jsx
+│   │   │       └── Questions.jsx
+│   │   ├── Auth/
+│   │   │   ├── AuthPage.jsx         # Auth orchestrator (login/register/forgot/reset)
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── ForgotPassword.jsx
+│   │   │   ├── OtpVerification.jsx
+│   │   │   ├── ResetPassword.jsx
+│   │   │   └── GoogleCallback.jsx
+│   │   ├── tryOn/
+│   │   │   ├── TryOn.jsx            # Virtual Try-On page (~1038 lines)
+│   │   │   └── style.module.css
+│   │   ├── wardrobe/
+│   │   │   └── WardrobePage.jsx
+│   │   ├── recycle/
+│   │   │   ├── Recycle.jsx          # AI Recycling page (~561 lines)
+│   │   │   └── components/
+│   │   │       ├── StepIndicator.jsx
+│   │   │       ├── UploadArea.jsx
+│   │   │       ├── UploadedImageCard.jsx
+│   │   │       ├── DesignIdeaCard.jsx
+│   │   │       ├── SettingsRow.jsx
+│   │   │       └── GeneratedDesign.jsx
+│   │   ├── matching/
+│   │   │   └── Matching.jsx         # Outfit matching page (~821 lines)
+│   │   ├── store/
+│   │   │   └── StoresPage.jsx       # Store browsing page (~472 lines)
+│   │   ├── recommendations/
+│   │   │   └── RecommendationsPage.jsx  # AI recommendations page (~309 lines)
+│   │   ├── avatar/
+│   │   │   └── AvatarGeneration.jsx # Avatar creator (~512 lines)
+│   │   ├── profile/
+│   │   │   ├── EditProfilePage.jsx  # User profile edit (~530 lines)
+│   │   │   └── ProfilePopup.jsx     # Profile dropdown popup
+│   │   ├── fav/
+│   │   │   └── Fav.jsx              # Favorites page
+│   │   ├── pricing/
+│   │   │   └── PricingPage.jsx      # Subscription plans & checkout (~666 lines)
+│   │   ├── about/
+│   │   │   ├── About.jsx
+│   │   │   └── components/
+│   │   │       ├── HeroSection.jsx
+│   │   │       └── TeamSection.jsx
+│   │   ├── aboutRecycle/
+│   │   │   └── AboutRecycle.jsx
+│   │   ├── aboutTryOn/
+│   │   │   └── AboutTryon.jsx
+│   │   ├── contactUs/
+│   │   │   └── ContactUs.jsx
+│   │   ├── admin/
+│   │   │   ├── AdminDashboardPage.jsx  # Admin dashboard orchestration (~300 lines)
+│   │   │   ├── AdminLayout.jsx
+│   │   │   └── sections/            # Admin section components
+│   │   │       ├── DashboardSection.jsx
+│   │   │       ├── StoresSection.jsx / AddStoreSection.jsx
+│   │   │       ├── ProductsSection.jsx / AddProductSection.jsx
+│   │   │       ├── NotificationsSection.jsx / AddNotificationSection.jsx
+│   │   │       ├── EmailCenterSection.jsx
+│   │   │       ├── UsersSection.jsx / AddUserSection.jsx
+│   │   │       ├── ApiManagementSection.jsx
+│   │   │       ├── SettingsSection.jsx
+│   │   │       ├── AutomatedNotificationsSection.jsx
+│   │   │       └── ScheduledNotificationsSection.jsx
+│   │   ├── OfflinePage/
+│   │   │   └── OfflinePage.jsx      # Offline fallback page
+│   │   └── NotFound/
+│   │       └── NotFound.jsx         # 404 page
+│   │
+│   └── icons/                       # 28 custom SVG icon components
+│       ├── AddIcon.jsx
+│       ├── ArrowRightIcon.jsx
+│       ├── BodyIcon.jsx
+│       ├── CameraIcon.jsx
+│       ├── RecycleIcon.jsx
+│       ├── ShuffleIcon.jsx
+│       └── ... (28 total)
+│
+├── index.html                       # HTML entry point with PWA meta tags
+├── vite.config.js                   # Vite config with PWA, Tailwind, proxy
+├── eslint.config.js                 # ESLint flat config
+├── package.json
+├── Dockerfile                       # Multi-stage Docker build (Node → Nginx)
+├── vercel.json                      # SPA rewrites for Vercel deployment
+├── .env                             # Environment variables template
+├── .env.development                 # Development environment variables
+├── .env.production                  # Production environment variables
+└── .gitignore
+```
 ---
 
 ## 🔐 Auth & Route Guards
